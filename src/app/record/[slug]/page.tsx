@@ -83,7 +83,7 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
     .order('published_at', { ascending: false })
     .limit(4);
 
-  const sanitizedHtml = DOMPurify.sanitize(record.content_html, {
+  const sanitizedHtml = DOMPurify.sanitize(record.content_html || '', {
     ADD_TAGS: ['span', 'pre', 'code', 'math', 'semantics', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'mfrac', 'msqrt', 'mroot', 'mtable', 'mtr', 'mtd', 'annotation'],
     ADD_ATTR: ['class', 'style', 'aria-hidden', 'xmlns', 'display']
   });
