@@ -23,7 +23,10 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
   if (!record) return {};
 
-  const ogImage = record.cover_image_url || `/api/og?title=${encodeURIComponent(record.title)}`;
+  let ogImage = record.cover_image_url || `/api/og?title=${encodeURIComponent(record.title)}`;
+  if (ogImage && ogImage.startsWith('http://localhost:3000')) {
+    ogImage = ogImage.replace('http://localhost:3000', '');
+  }
 
   return {
     title: `${record.title} | Quark Ledger`,
@@ -88,11 +91,16 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
     ADD_ATTR: ['class', 'style', 'aria-hidden', 'xmlns', 'display']
   });
 
+  let resolvedImageUrl = record.cover_image_url;
+  if (resolvedImageUrl && resolvedImageUrl.startsWith('http://localhost:3000')) {
+    resolvedImageUrl = resolvedImageUrl.replace('http://localhost:3000', '');
+  }
+
   const jsonLd = {
     '@context': 'https://schema.org',
     '@type': 'NewsArticle',
     headline: record.title,
-    image: [record.cover_image_url],
+    image: [resolvedImageUrl],
     datePublished: record.published_at,
     author: [{
       '@type': 'Person',
@@ -144,10 +152,10 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
           {record.title}
         </h1>
 
-        {record.cover_image_url && (
+        {resolvedImageUrl && (
           <figure className="mb-8 w-full border-2 border-ledger-ink">
             <Image 
-              src={record.cover_image_url} 
+              src={resolvedImageUrl} 
               alt={record.title} 
               width={1200}
               height={675}
