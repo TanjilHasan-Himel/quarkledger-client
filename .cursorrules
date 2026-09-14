@@ -1,0 +1,15 @@
+# Context Profile: Quark Ledger (Public Client)
+- Scope: Read-Only Public Journal UI (Next.js App Router).
+- Data Engine: Supabase Client utilizing ANON KEY ONLY. Never import or use SERVICE_ROLE_KEY.
+- Design Rules:
+  - Aesthetics: Neo-Brutalist Anti-AI Broadside Magazine.
+  - Borders: Strict 1px sharp edges (`border-ledger-border`). Zero border-radius (`rounded-none`).
+  - Colors: Paper (`#F6F4EE`), Ink (`#111111`), Border (`#D8D4C8`), Accent (`#D9381E`).
+  - Strict exclusion: No Framer Motion micro-springs, no modern blue/purple gradients, no glassmorphism, no box-shadows.
+- Typography:
+  - Headlines: Serif (`font-headline`).
+  - Body: Serif (`font-body`).
+  - System/Metadata: Monospace (`font-mono`).
+- Responsibilities:
+  - Page generation, SEO metadata, RSS/Atom feeds, reading performance.
+  - Absolutely zero data-mutation forms or editor packages allowed here.

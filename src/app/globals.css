@@ -1,26 +1,260 @@
+@import url('https://fonts.googleapis.com/css2?family=Science+Gothic:wght@400;700&display=swap');
 @import "tailwindcss";
+@plugin "@tailwindcss/typography";
 
-:root {
-  --background: #ffffff;
-  --foreground: #171717;
+@font-face {
+  font-family: 'SevenSegment';
+  src: url('/fonts/SevenSegment.woff') format('woff');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
 }
 
 @theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+  --color-ledger-paper: #F4EFE6;
+  --color-ledger-ink: #1C1917;
+  --color-ledger-border: #D3CBBE;
+  --color-ledger-borderDark: #8A8275;
+  --color-ledger-accent: #C4430E;
+  --color-ledger-amber: #FFA94D;
+  --color-ledger-muted: #666055;
+
+  --font-science-gothic: 'Science Gothic', sans-serif;
+  --font-english-display: var(--font-science-gothic), var(--font-playfair-display), Georgia, serif;
+  --font-anek-bangla: var(--font-anek-bangla), 'Anek Bangla', sans-serif;
+  --font-tiro-bangla: var(--font-tiro-bangla), 'Tiro Bangla', serif;
+  --font-headline: var(--font-anek-bangla), 'Anek Bangla', var(--font-playfair-display), Georgia, serif;
+  --font-body: var(--font-hind-siliguri), 'Hind Siliguri', serif;
+  --font-mono: var(--font-jetbrains-mono), monospace;
+  --font-press-start: var(--font-press-start), monospace;
+  --font-seven-segment: 'SevenSegment', monospace;
+
+  --radius-sm: 0px;
+  --radius-md: 0px;
+  --radius-lg: 0px;
+  --radius-xl: 0px;
+  --radius-2xl: 0px;
+  --radius-3xl: 0px;
+  --radius-4xl: 0px;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --background: #0a0a0a;
-    --foreground: #ededed;
-  }
+:root {
+  /* ========================================================
+     WARM EDITORIAL SYSTEM — VIBRANT FIERY EMBERS & BROADSHEET
+     ======================================================== */
+  --orange: #FF5722;
+  --orange-light: #FFAB91;
+  --orange-ember: #C4430E;
+  --amber-warm: #FFA94D;
+  --crimson-deep: #590A14;
+  --garnet-dark: #140204;
+
+  /* Category Tag Palette (STRICTLY 5 colors max, TAGS ONLY) */
+  --c-tech: #FF5722;
+  --c-politics: #7FB0E0;
+  --c-business: #8FD19A;
+  --c-sports: #E39199;
+  --c-culture: #C3A6EC;
+
+  --background: var(--color-ledger-paper);
+  --foreground: var(--color-ledger-ink);
+}
+
+/* Global Reset: prevent blue-underline default link styles */
+a {
+  color: inherit;
+  text-decoration: none;
+}
+
+.card {
+  display: block;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
-  font-family: Arial, Helvetica, sans-serif;
+  font-family: var(--font-body);
+  /* Tactile Newsprint Subtle Grain */
+  background-image: radial-gradient(var(--color-ledger-borderDark) 0.5px, transparent 0.5px);
+  background-size: 16px 16px;
+  background-position: 0 0;
+  text-rendering: optimizeLegibility;
+}
+
+/* Broadsheet Double Rule Class */
+.border-double-rule {
+  border-bottom: 4px double var(--color-ledger-ink);
+}
+
+/* Halftone Photographic Plate */
+.halftone-plate {
+  filter: grayscale(100%) contrast(125%);
+  border: 1px solid var(--color-ledger-ink);
+  padding: 3px;
+  background-color: #FFFFFF;
+}
+
+/* ========================================================
+   TAG COMPONENT WITH GLAZE (Glossy Diagonal Accent)
+   Lives ONLY inside the .tag component
+   ======================================================== */
+.tag {
+  --ink: color-mix(in srgb, var(--cat, var(--orange)) 35%, black);
+  --light: color-mix(in srgb, var(--cat, var(--orange)) 45%, white);
+  background: linear-gradient(135deg, var(--light), var(--cat, var(--orange)) 65%);
+  color: var(--ink);
+  position: relative;
+  overflow: hidden;
+  display: inline-flex;
+  align-items: center;
+  font-family: var(--font-mono);
+  font-size: 10px;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  padding: 2.5px 8.5px;
+  border-radius: 2px;
+  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+}
+
+/* Glaze: tiny diagonal gloss lives ONLY inside the .tag component */
+.tag::after {
+  content: '';
+  position: absolute;
+  inset: 0;
+  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.5) 50%, transparent 65%);
+  pointer-events: none;
+}
+
+/* ========================================================
+   GRAIN EFFECT: Hero card + dark section bands only
+   ======================================================== */
+.band.grain, .hero.grain {
+  background-image: 
+    radial-gradient(rgba(255, 255, 255, 0.07) 1px, transparent 1px),
+    radial-gradient(rgba(0, 0, 0, 0.35) 1px, transparent 1px);
+  background-size: 8px 8px, 16px 16px;
+  background-position: 0 0, 4px 4px;
+}
+
+/* ========================================================
+   HERO SHINE-SWEEP (Hero Card Only)
+   ======================================================== */
+.hero-shine {
+  position: relative;
+  overflow: hidden;
+}
+.hero-shine::after {
+  content: '';
+  position: absolute;
+  top: -50%;
+  left: -100%;
+  width: 60%;
+  height: 200%;
+  background: linear-gradient(
+    60deg,
+    transparent,
+    rgba(255, 255, 255, 0.08) 45%,
+    rgba(255, 255, 255, 0.22) 50%,
+    transparent 55%
+  );
+  transform: rotate(25deg);
+  transition: left 0.75s ease-in-out;
+  pointer-events: none;
+}
+.hero-shine:hover::after {
+  left: 150%;
+}
+
+/* ========================================================
+   TOPIC-SPECIFIC DYNAMIC HOVER EFFECTS
+   ======================================================== */
+
+/* Space & Astronomy: Deep Cosmic Star Grain & Lavender Glow */
+.card-space {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), border-color 0.25s ease, box-shadow 0.25s ease, background 0.3s ease;
+}
+.card-space:hover {
+  transform: translateY(-4px);
+  border-color: #C3A6EC;
+  box-shadow: 0 12px 30px rgba(195, 166, 236, 0.25);
+  background: 
+    radial-gradient(circle at 85% 15%, rgba(195, 166, 236, 0.12) 0%, transparent 60%),
+    radial-gradient(rgba(120, 80, 180, 0.08) 1px, transparent 1px) 0 0 / 12px 12px,
+    #FFFFFF;
+}
+.card-space:hover h3 {
+  color: #693bb8;
+}
+
+/* AI & Frontier Tech: Neural Cyber Pulse Glow */
+.card-ai {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.card-ai:hover {
+  transform: translateY(-4px);
+  border-color: #FF5722;
+  box-shadow: 0 12px 30px rgba(255, 87, 34, 0.22);
+}
+.card-ai:hover h3 {
+  color: #D84315;
+}
+
+/* Bangladesh & National: Dignified Editorial Blue Rule */
+.card-bd {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.card-bd:hover {
+  transform: translateY(-4px);
+  border-color: #7FB0E0;
+  box-shadow: 0 12px 30px rgba(127, 176, 224, 0.24);
+}
+.card-bd:hover h3 {
+  color: #1864ab;
+}
+
+/* Business & Economy: Mint Green Growth Glow */
+.card-business {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.card-business:hover {
+  transform: translateY(-4px);
+  border-color: #8FD19A;
+  box-shadow: 0 12px 30px rgba(143, 209, 154, 0.24);
+}
+.card-business:hover h3 {
+  color: #2b8a3e;
+}
+
+/* Sports: Coral Athletic Speed Line */
+.card-sports {
+  position: relative;
+  transition: transform 0.25s cubic-bezier(0.2, 0, 0, 1), border-color 0.25s ease, box-shadow 0.25s ease;
+}
+.card-sports:hover {
+  transform: translateY(-4px);
+  border-color: #E39199;
+  box-shadow: 0 12px 30px rgba(227, 145, 153, 0.24);
+}
+.card-sports:hover h3 {
+  color: #c92a2a;
+}
+
+@keyframes marquee {
+  0% { transform: translateX(0%); }
+  100% { transform: translateX(-50%); }
+}
+
+/* Hide scrollbar for Chrome, Safari and Opera */
+.scrollbar-hide::-webkit-scrollbar {
+  display: none;
+}
+/* Hide scrollbar for IE, Edge and Firefox */
+.scrollbar-hide {
+  -ms-overflow-style: none;
+  scrollbar-width: none;
 }
