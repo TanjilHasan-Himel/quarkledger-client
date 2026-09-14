@@ -84,14 +84,19 @@ export default async function BroadsheetHomePage() {
     return { name: 'সাধারণ (General)', slug: 'general' };
   };
 
-  // 3. Hero Two-Slot: Dominant #1, Companion from a DIFFERENT category to show broadsheet variety
-  const dominantHero = allPosts[0];
+  // 3. Hero Two-Slot: Pull from Admin "★ নির্বাচিত" (Highlights) first, fallback to latest
+  const manualHighlights = manualHighlightIds
+    .map(id => allPosts.find(p => p.id === id))
+    .filter(Boolean) as StoryCardPost[];
+
+  const dominantHero = manualHighlights[0] || allPosts[0];
   const dominantCat = getPrimaryCategory(dominantHero);
 
-  const companionHero = allPosts.find(p => {
+  const companionHero = manualHighlights[1] || allPosts.find(p => {
+    if (p.id === dominantHero.id) return false;
     const cat = getPrimaryCategory(p);
     return (cat.slug || cat.name) !== (dominantCat.slug || dominantCat.name);
-  }) || allPosts[1] || null;
+  }) || allPosts.find(p => p.id !== dominantHero.id) || null;
 
   // 4. Featured Content Grid (Next 3 stories excluding the hero stories)
   const heroIds = new Set([dominantHero.id, companionHero?.id].filter(Boolean));
@@ -134,13 +139,8 @@ export default async function BroadsheetHomePage() {
     .filter(p => p.id !== collectionLead.id)
     .slice(0, 3);
 
-  // 8. Highlights Grid: Prioritize manually pinned posts from Admin, auto-fill remaining
-  const manualHighlights = manualHighlightIds
-    .map(id => allPosts.find(p => p.id === id))
-    .filter(Boolean) as StoryCardPost[];
-
-  const remainingForHighlights = allPosts.filter(p => !manualHighlightIds.includes(p.id));
-  const highlightPosts = [...manualHighlights, ...remainingForHighlights].slice(0, 3);
+  // 8. Highlights Grid: Fill remaining slots for the bottom section
+  const highlightPosts = [...manualHighlights, ...allPosts.filter(p => !manualHighlightIds.includes(p.id))].slice(0, 3);
 
   return (
     <div className="min-h-screen bg-ledger-paper text-ledger-ink flex flex-col">

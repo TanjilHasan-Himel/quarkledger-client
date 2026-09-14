@@ -41,6 +41,7 @@
   --font-mono: var(--font-jetbrains-mono), monospace;
   --font-press-start: var(--font-press-start), monospace;
   --font-seven-segment: 'SevenSegment', monospace;
+  --font-digital: var(--font-digital), 'SevenSegment', monospace;
 
   --radius-sm: 0px;
   --radius-md: 0px;
@@ -253,6 +254,63 @@ body {
 @keyframes marquee {
   0% { transform: translateX(0%); }
   100% { transform: translateX(-50%); }
+}
+
+/* Apple-style blur-to-sharp text reveal */
+@keyframes blur-in {
+  from {
+    filter: blur(12px);
+    opacity: 0;
+    transform: translateY(6px);
+  }
+  to {
+    filter: blur(0px);
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-blur-in {
+  animation: blur-in 0.65s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Bottom-to-top text slide reveal */
+@keyframes slide-up {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-slide-up {
+  animation: slide-up 0.6s cubic-bezier(0.22, 1, 0.36, 1) both;
+}
+
+/* Apple DUO: Gaussian blur + rotateX flip reveal (exact Apple Intelligence technique) */
+@keyframes apple-flip {
+  0% {
+    transform: rotateX(-90deg) translateY(16px);
+    filter: blur(10px);
+    opacity: 0;
+  }
+  60% {
+    filter: blur(2px);
+    opacity: 0.7;
+  }
+  100% {
+    transform: rotateX(0deg) translateY(0);
+    filter: blur(0px);
+    opacity: 1;
+  }
+}
+
+.animate-apple-flip {
+  animation: apple-flip 0.7s cubic-bezier(0.22, 1, 0.36, 1) both;
+  transform-origin: bottom center;
 }
 
 /* Hide scrollbar for Chrome, Safari and Opera */

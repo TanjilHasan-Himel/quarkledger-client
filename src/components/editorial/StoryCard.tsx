@@ -245,16 +245,14 @@ export function StoryCard({ post, variant = 'standard', priority = false }: Stor
               sizes="(max-width: 768px) 100vw, (max-width: 1200px) 50vw, 33vw"
               className="object-cover group-hover:scale-103 transition-transform duration-500"
               priority={priority}
+              // Pollinations AI images must bypass next/image optimizer (it can't proxy external AI-generated image URLs)
+              unoptimized={!!post.cover_image_url?.includes('pollinations.ai')}
             />
           ) : (
-            <div className="absolute inset-0 bg-gradient-to-br from-[#1A1816] via-[#2A2320] to-[#140204] flex flex-col items-center justify-center p-6 text-center select-none group-hover:scale-102 transition-transform duration-500">
-              <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#FF5722 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
-              <span className="font-[family:var(--font-press-start)] text-[7px] uppercase tracking-tight text-[#FF5722] font-bold z-10 mb-3 leading-relaxed">
-                QUARK{'\n'}LEDGER
-              </span>
-              <span className="font-headline font-bold text-sm text-white/90 line-clamp-2 z-10">
-                {post.title}
-              </span>
+            <div className="absolute inset-0 bg-[#0F0D0B] flex flex-col items-center justify-center p-6 text-center select-none">
+              <span className="font-mono text-[8px] uppercase tracking-[0.3em] text-[#FF5722]/60 mb-3">Quark Ledger</span>
+              <span className="font-headline font-bold text-sm text-white/80 line-clamp-3 leading-snug">{post.title}</span>
+              <span className="absolute bottom-3 right-3 font-mono text-[8px] text-white/20 uppercase tracking-widest">{categoryName}</span>
             </div>
           )}
         </div>

@@ -1,7 +1,6 @@
 'use client';
 
 import { useState, useEffect } from 'react';
-import { motion } from 'framer-motion';
 import Link from 'next/link';
 import Image from 'next/image';
 
@@ -11,7 +10,7 @@ interface HeroPost {
   slug: string;
   lead_paragraph: string;
   cover_image_url?: string;
-  categories?: { name: string, slug: string };
+  categories?: { name: string; slug: string };
 }
 
 interface AnimatedSplitHeroProps {
@@ -19,102 +18,144 @@ interface AnimatedSplitHeroProps {
   rightPost: HeroPost;
 }
 
+function CardContent({ post, isDominant }: { post: HeroPost; isDominant: boolean }) {
+  const isAiImage = post.cover_image_url?.includes('pollinations.ai');
+
+  return (
+    <div className="relative h-full w-full overflow-hidden bg-[#0F0D0B] flex flex-col justify-end p-8 md:p-10 border-2 border-ledger-ink group">
+      
+      {/* Background Image with CSS Ken Burns - no JS animation */}
+      {post.cover_image_url && (
+        <div className="absolute inset-0 z-0">
+          <div className="absolute inset-0 bg-gradient-to-t from-black/95 via-black/50 to-black/10 z-10" />
+          <Image
+            src={post.cover_image_url}
+            alt={post.title}
+            fill
+            quality={90}
+            sizes="(max-width: 768px) 100vw, 60vw"
+            className={`object-cover transition-all duration-[8000ms] ease-linear ${isDominant ? 'scale-110' : 'scale-100'}`}
+            style={{ opacity: isDominant ? 0.85 : 0.55 }}
+            priority
+            unoptimized={isAiImage}
+          />
+        </div>
+      )}
+
+      {/* AI Credit */}
+      {isAiImage && (
+        <div className="absolute top-3 right-3 z-30 bg-black/50 text-white/40 font-mono text-[8px] uppercase tracking-widest px-2 py-0.5 border border-white/10">
+          AI · Generated
+        </div>
+      )}
+
+      {/* Content */}
+      <div className="relative z-20 flex flex-col items-start">
+        
+        {/* Category badge */}
+        {post.categories && (
+          <span className={`bg-ledger-orange text-white font-mono text-xs font-bold uppercase tracking-widest px-3 py-1 mb-4 shadow transition-opacity duration-700 ${isDominant ? 'opacity-100' : 'opacity-70'}`}>
+            {post.categories.name}
+          </span>
+        )}
+
+        {/* Title — always visible, font size transitions via CSS */}
+        <h2 className={`font-headline font-black text-white leading-tight drop-shadow-lg transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isDominant ? 'text-3xl md:text-[2.6rem]' : 'text-xl md:text-2xl'
+        }`}>
+          {post.title}
+        </h2>
+
+        {/* Lead — Apple DUO Gaussian flip: each line rotates in from below on X-axis + blur */}
+        <div className={`overflow-hidden transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] ${
+          isDominant ? 'max-h-40 opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'
+        }`} style={{ perspective: '800px' }}>
+          {isDominant && (() => {
+            const words = (post.lead_paragraph || '').split(' ');
+            const lines: string[] = [];
+            for (let i = 0; i < words.length; i += 8) {
+              lines.push(words.slice(i, i + 8).join(' '));
+            }
+            return lines.slice(0, 3).map((line, i) => (
+              <div key={i} className="pt-1 pb-1">
+                <span
+                  className="block font-body text-white/85 text-base md:text-lg leading-relaxed opacity-0 animate-apple-flip"
+                  style={{ animationDelay: `${i * 100}ms`, animationFillMode: 'forwards', backfaceVisibility: 'hidden' }}
+                >
+                  {line}
+                </span>
+              </div>
+            ));
+          })()}
+        </div>
+
+        {/* Read CTA */}
+        <div className={`overflow-hidden transition-all duration-500 ease-in-out ${isDominant ? 'max-h-12 opacity-100 mt-4' : 'max-h-0 opacity-0 mt-0'}`}>
+          <span className="inline-flex items-center gap-2 font-mono text-xs font-bold uppercase tracking-wider text-ledger-orange border border-ledger-orange px-4 py-1.5 group-hover:bg-ledger-orange group-hover:text-white transition-colors">
+            পড়ুন →
+          </span>
+        </div>
+      </div>
+    </div>
+  );
+}
+
 export function AnimatedSplitHero({ leftPost, rightPost }: AnimatedSplitHeroProps) {
-  // We'll toggle between two states: 0 = left dominant, 1 = right dominant
   const [activeState, setActiveState] = useState<0 | 1>(0);
+  const [isHovered, setIsHovered] = useState(false);
 
   useEffect(() => {
-    // Loop the state every 6 seconds
+    if (isHovered) return;
     const interval = setInterval(() => {
       setActiveState((prev) => (prev === 0 ? 1 : 0));
     }, 6000);
     return () => clearInterval(interval);
-  }, []);
-
-  // Spring physics for the "tan" (elastic/stretch) feel
-  const springConfig = {
-    type: 'spring' as const,
-    damping: 25,
-    stiffness: 120,
-    mass: 1.2
-  };
-
-  const CardContent = ({ post, isDominant }: { post: HeroPost, isDominant: boolean }) => (
-    <div className="relative h-full w-full overflow-hidden bg-black flex flex-col justify-end p-8 md:p-12 border-2 border-ledger-ink group">
-      {post.cover_image_url && (
-        <motion.div 
-          className="absolute inset-0 z-0"
-          animate={{ scale: isDominant ? 1.05 : 1 }}
-          transition={{ duration: 6, ease: "linear" }}
-        >
-          <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/40 to-transparent z-10" />
-          <Image 
-            src={post.cover_image_url} 
-            alt={post.title} 
-            fill 
-            className="object-cover opacity-70 group-hover:opacity-90 transition-opacity duration-700" 
-          />
-        </motion.div>
-      )}
-      
-      <div className="relative z-20 flex flex-col items-start max-w-2xl">
-        {post.categories && (
-          <span className="bg-ledger-orange text-white font-mono text-xs font-bold uppercase tracking-widest px-3 py-1 mb-4 shadow-sm">
-            {post.categories.name}
-          </span>
-        )}
-        <h2 className={`font-headline font-black text-white leading-tight drop-shadow-md mb-4 transition-all duration-700 ${isDominant ? 'text-3xl md:text-5xl' : 'text-2xl md:text-4xl'}`}>
-          {post.title}
-        </h2>
-        
-        {/* Use pure CSS max-height and opacity transition for buttery smooth accordion effect without reflow jitter */}
-        <p 
-          className={`font-body text-white/90 text-lg md:text-xl line-clamp-2 md:line-clamp-3 transition-all duration-700 ease-in-out overflow-hidden ${
-            isDominant ? 'opacity-100 max-h-40 mt-4' : 'opacity-0 max-h-0 mt-0'
-          }`}
-        >
-          {post.lead_paragraph}
-        </p>
-      </div>
-    </div>
-  );
+  }, [isHovered]);
 
   return (
-    <section className="w-full bg-[#FF5722] py-8 px-4 md:px-8 overflow-hidden">
-      <div className="max-w-[1500px] mx-auto h-[600px] md:h-[700px] flex flex-col md:flex-row gap-6 relative">
-        
-        {/* LEFT CARD */}
-        <motion.div
-          className="h-1/2 md:h-full relative cursor-pointer"
-          animate={{
-            width: typeof window !== 'undefined' && window.innerWidth >= 768 
-              ? (activeState === 0 ? '60%' : '40%')
-              : '100%'
+    <section className="w-full bg-[#FF5722] py-6 px-4 md:px-8 overflow-hidden">
+      <div
+        className="max-w-[1500px] mx-auto flex flex-col md:flex-row gap-4"
+        style={{ height: 'clamp(480px, 65vh, 700px)' }}
+        onMouseLeave={() => setIsHovered(false)}
+      >
+        {/* LEFT CARD — Pure CSS flex-grow transition (no JS layout thrashing) */}
+        <div
+          className="relative cursor-pointer h-1/2 md:h-full"
+          style={{
+            flexGrow: activeState === 0 ? 1.6 : 0.8,
+            flexShrink: 1,
+            flexBasis: 0,
+            transition: 'flex-grow 700ms cubic-bezier(0.22, 1, 0.36, 1)',
           }}
-          transition={springConfig}
-          onMouseEnter={() => setActiveState(0)}
+          onMouseEnter={() => { setIsHovered(true); setActiveState(0); }}
         >
-          <Link href={`/record/${leftPost.slug}`} className="block h-full w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300">
+          <Link
+            href={`/record/${leftPost.slug}`}
+            className="block h-full w-full shadow-[6px_6px_0_0_rgba(0,0,0,0.9)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.9)] hover:translate-x-[4px] hover:translate-y-[4px] transition-[transform,box-shadow] duration-200"
+          >
             <CardContent post={leftPost} isDominant={activeState === 0} />
           </Link>
-        </motion.div>
+        </div>
 
         {/* RIGHT CARD */}
-        <motion.div
-          className="h-1/2 md:h-full relative cursor-pointer"
-          animate={{
-            width: typeof window !== 'undefined' && window.innerWidth >= 768 
-              ? (activeState === 1 ? '60%' : '40%')
-              : '100%'
+        <div
+          className="relative cursor-pointer h-1/2 md:h-full"
+          style={{
+            flexGrow: activeState === 1 ? 1.6 : 0.8,
+            flexShrink: 1,
+            flexBasis: 0,
+            transition: 'flex-grow 700ms cubic-bezier(0.22, 1, 0.36, 1)',
           }}
-          transition={springConfig}
-          onMouseEnter={() => setActiveState(1)}
+          onMouseEnter={() => { setIsHovered(true); setActiveState(1); }}
         >
-          <Link href={`/record/${rightPost.slug}`} className="block h-full w-full shadow-[8px_8px_0px_0px_rgba(0,0,0,1)] hover:shadow-[4px_4px_0px_0px_rgba(0,0,0,1)] hover:translate-x-[4px] hover:translate-y-[4px] transition-all duration-300">
+          <Link
+            href={`/record/${rightPost.slug}`}
+            className="block h-full w-full shadow-[6px_6px_0_0_rgba(0,0,0,0.9)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.9)] hover:translate-x-[4px] hover:translate-y-[4px] transition-[transform,box-shadow] duration-200"
+          >
             <CardContent post={rightPost} isDominant={activeState === 1} />
           </Link>
-        </motion.div>
-
+        </div>
       </div>
     </section>
   );

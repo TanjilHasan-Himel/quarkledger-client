@@ -45,7 +45,7 @@ export async function GrandMasthead() {
       <div className="max-w-[1400px] mx-auto px-6 py-7 flex flex-col md:flex-row justify-between items-start md:items-center relative">
         
         {/* Left Section: Logo & Menu */}
-        <div className="flex items-center gap-4 z-10 mt-4 md:mt-0">
+        <div className="flex items-center gap-4 z-50 mt-4 md:mt-0">
           <NavigationOverlay categories={(allCategories || []).filter(c => c.depth === 0)} />
           <Link href="/" className="inline-block group">
             <h1 className="text-4xl md:text-5xl font-[family:var(--font-english-display)] font-black tracking-tighter uppercase select-none text-white drop-shadow-md group-hover:text-ledger-amber-warm transition-colors">
@@ -60,8 +60,8 @@ export async function GrandMasthead() {
         <div className="mt-8 md:mt-0 flex flex-col items-start md:items-end text-sm md:text-base font-bold font-headline tracking-wide space-y-0.5">
           <div className="text-white/90">{currentDateEn}</div>
           <div className="text-white/90">{currentDateBn}</div>
-          <div className="text-white/70 font-mono text-xs">{currentDateAr}</div>
-          <div className="text-ledger-amber-warm mt-1 uppercase tracking-widest text-base font-mono font-bold">{currentDay}</div>
+          <div className="text-white/70 font-digital text-sm md:text-base tracking-[0.1em]">{currentDateAr}</div>
+          <div className="text-ledger-amber-warm mt-1 uppercase tracking-widest text-base font-digital font-bold">{currentDay}</div>
         </div>
       </div>
 

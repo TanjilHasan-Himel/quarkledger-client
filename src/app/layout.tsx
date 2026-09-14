@@ -1,5 +1,5 @@
 import type { Metadata } from "next";
-import { Anek_Bangla, Hind_Siliguri, JetBrains_Mono, Playfair_Display, Tiro_Bangla, Press_Start_2P } from 'next/font/google';
+import { Anek_Bangla, Hind_Siliguri, JetBrains_Mono, Playfair_Display, Tiro_Bangla, Press_Start_2P, Share_Tech_Mono } from 'next/font/google';
 import "./globals.css";
 import "katex/dist/katex.min.css";
 import "highlight.js/styles/github-dark.css";
@@ -48,6 +48,13 @@ const jetbrainsMono = JetBrains_Mono({
   display: 'swap',
 });
 
+const shareTechMono = Share_Tech_Mono({
+  weight: ['400'],
+  subsets: ['latin'],
+  variable: '--font-digital',
+  display: 'swap',
+});
+
 export const metadata: Metadata = {
   metadataBase: new URL('https://quarkledger.com'),
   title: "Quark Ledger — সমকালীন জিজ্ঞাসা ও বৈজ্ঞানিক অনুসন্ধান",
@@ -68,7 +75,7 @@ export default async function RootLayout({ children }: { children: React.ReactNo
     .order('name')
     .limit(6);
   return (
-    <html lang="bn" className={`${playfairDisplay.variable} ${tiroBangla.variable} ${pressStart.variable} ${anekBangla.variable} ${hindSiliguri.variable} ${jetbrainsMono.variable} h-full antialiased`}>
+    <html lang="bn" className={`${playfairDisplay.variable} ${tiroBangla.variable} ${pressStart.variable} ${anekBangla.variable} ${hindSiliguri.variable} ${jetbrainsMono.variable} ${shareTechMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-body selection:bg-ledger-accent selection:text-white bg-ledger-paper">
         <div className="flex-1">
           {children}

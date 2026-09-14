@@ -58,13 +58,13 @@ export function BreakingTicker({ items = [] }: { items?: TickerItem[] }) {
         title="লাইভ ঘড়ি / Live Clock"
       >
         <div className="flex items-baseline gap-1">
-          <span className="font-[family:var(--font-seven-segment)] text-xl md:text-2xl tracking-wider tabular-nums leading-none text-ledger-ink">
+          <span className="font-digital text-2xl md:text-3xl tracking-widest tabular-nums leading-none text-ledger-ink">
             <span>{hours}</span>
             <span className={`transition-opacity duration-150 ${showColon ? 'opacity-100' : 'opacity-20'} mx-[1px]`}>:</span>
             <span>{minutes || '--'}</span>
           </span>
           {ampm && (
-            <span className="font-mono text-[9px] font-bold text-ledger-muted uppercase tracking-tight">
+            <span className="font-digital text-[10px] md:text-xs font-bold text-ledger-muted uppercase tracking-wider">
               {ampm}
             </span>
           )}
