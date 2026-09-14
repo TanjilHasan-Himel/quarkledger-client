@@ -3,7 +3,7 @@ import Link from 'next/link';
 import { createServerClient } from '@/lib/supabase/server';
 import { ScrollProgress } from '@/components/reader/ScrollProgress';
 import { RecordViewTracker } from './RecordViewTracker';
-import DOMPurify from 'isomorphic-dompurify';
+import sanitizeHtml from 'sanitize-html';
 import { Metadata } from 'next';
 import Image from 'next/image';
 import { SocialShareAndBookmark } from '@/components/article/SocialShareAndBookmark';
@@ -97,9 +97,19 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
     .order('published_at', { ascending: false })
     .limit(4);
 
-  const sanitizedHtml = DOMPurify.sanitize(record.content_html || '', {
-    ADD_TAGS: ['span', 'pre', 'code', 'math', 'semantics', 'mrow', 'mi', 'mo', 'mn', 'msup', 'msub', 'mfrac', 'msqrt', 'mroot', 'mtable', 'mtr', 'mtd', 'annotation'],
-    ADD_ATTR: ['class', 'style', 'aria-hidden', 'xmlns', 'display']
+  const sanitizedHtml = sanitizeHtml(record.content_html || '', {
+    allowedTags: sanitizeHtml.defaults.allowedTags.concat([
+      'span', 'pre', 'code', 'math', 'semantics', 'mrow', 'mi', 'mo', 'mn',
+      'msup', 'msub', 'mfrac', 'msqrt', 'mroot', 'mtable', 'mtr', 'mtd', 'annotation',
+      'img', 'figure', 'figcaption', 'details', 'summary', 'mark'
+    ]),
+    allowedAttributes: {
+      ...sanitizeHtml.defaults.allowedAttributes,
+      '*': ['class', 'style', 'id', 'aria-hidden'],
+      'math': ['xmlns', 'display'],
+      'img': ['src', 'alt', 'width', 'height', 'loading'],
+      'a': ['href', 'target', 'rel'],
+    },
   });
 
   let resolvedImageUrl = record.cover_image_url;
