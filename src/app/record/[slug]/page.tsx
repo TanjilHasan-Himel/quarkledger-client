@@ -212,11 +212,15 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
               {record.location_city && (
                 <span className="px-3 py-1 bg-gray-200 text-black font-mono text-[10px] font-bold uppercase tracking-widest border border-gray-300">{record.location_city}</span>
               )}
-              {(record.post_categories || []).filter((pc: any) => !pc.is_primary).map((pc: any) => (
-                <Link key={pc.categories.id} href={`/category/${pc.categories.slug}`} className="px-3 py-1 bg-transparent text-black font-mono text-[10px] font-bold uppercase tracking-widest border border-black hover:bg-black hover:text-white transition-colors">
-                  {pc.categories.name}
-                </Link>
-              ))}
+              {(record.post_categories || []).filter((pc: any) => !pc.is_primary).map((pc: any) => {
+                const cat = Array.isArray(pc.categories) ? pc.categories[0] : pc.categories;
+                if (!cat || !cat.id) return null;
+                return (
+                  <Link key={cat.id} href={`/category/${cat.slug || 'general'}`} className="px-3 py-1 bg-transparent text-black font-mono text-[10px] font-bold uppercase tracking-widest border border-black hover:bg-black hover:text-white transition-colors">
+                    {cat.name || 'Category'}
+                  </Link>
+                );
+              })}
             </div>
           </div>
           <div className="mt-12 pt-6 border-t-2 border-ledger-ink">
