@@ -58,9 +58,9 @@ export function StoryCarousel({
         <div className="w-full mb-6 pb-3 border-b-2 border-ledger-border flex flex-col md:flex-row md:items-end justify-between gap-4">
           <div className="flex flex-col">
             <div className="flex items-center gap-2 mb-2">
-              <span className="w-2.5 h-2.5 bg-[#FF5722] rounded-xs inline-block" />
+              <span className="w-2.5 h-2.5 bg-ledger-orange rounded-xs inline-block" />
               {badge && (
-                <span className="font-mono text-[10px] uppercase font-bold tracking-widest text-[#FF5722]">
+                <span className="font-mono text-[10px] uppercase font-bold tracking-widest text-ledger-orange">
                   {badge}
                 </span>
               )}
@@ -80,7 +80,7 @@ export function StoryCarousel({
             {href && (
               <Link
                 href={href}
-                className="font-mono text-xs font-bold text-[#FF5722] hover:underline underline-offset-4 tracking-wider uppercase transition-colors mr-1"
+                className="font-mono text-xs font-bold text-ledger-orange hover:underline underline-offset-4 tracking-wider uppercase transition-colors mr-1"
               >
                 {actionText}
               </Link>
@@ -93,7 +93,7 @@ export function StoryCarousel({
                 onClick={() => scroll('left')}
                 disabled={!canScrollLeft}
                 aria-label="পূর্ববর্তী স্লাইড"
-                className="w-8 h-8 border border-ledger-borderDark bg-[#EDE6D8] hover:bg-[#FF5722] hover:border-[#FF5722] hover:text-white text-ledger-ink transition-all active:scale-90 active:translate-y-[1px] disabled:opacity-25 disabled:hover:bg-[#EDE6D8] disabled:hover:border-ledger-borderDark disabled:hover:text-ledger-ink cursor-pointer flex items-center justify-center shadow-2xs"
+                className="w-8 h-8 border border-ledger-borderDark bg-ledger-control hover:bg-ledger-orange hover:border-ledger-orange hover:text-white text-ledger-ink transition-all active:scale-90 active:translate-y-[1px] disabled:opacity-25 disabled:hover:bg-ledger-control disabled:hover:border-ledger-borderDark disabled:hover:text-ledger-ink cursor-pointer flex items-center justify-center shadow-2xs"
               >
                 <ChevronLeft className="w-4 h-4" />
               </button>
@@ -102,7 +102,7 @@ export function StoryCarousel({
                 onClick={() => scroll('right')}
                 disabled={!canScrollRight}
                 aria-label="পরবর্তী স্লাইড"
-                className="w-8 h-8 border border-ledger-borderDark bg-[#EDE6D8] hover:bg-[#FF5722] hover:border-[#FF5722] hover:text-white text-ledger-ink transition-all active:scale-90 active:translate-y-[1px] disabled:opacity-25 disabled:hover:bg-[#EDE6D8] disabled:hover:border-ledger-borderDark disabled:hover:text-ledger-ink cursor-pointer flex items-center justify-center shadow-2xs"
+                className="w-8 h-8 border border-ledger-borderDark bg-ledger-control hover:bg-ledger-orange hover:border-ledger-orange hover:text-white text-ledger-ink transition-all active:scale-90 active:translate-y-[1px] disabled:opacity-25 disabled:hover:bg-ledger-control disabled:hover:border-ledger-borderDark disabled:hover:text-ledger-ink cursor-pointer flex items-center justify-center shadow-2xs"
               >
                 <ChevronRight className="w-4 h-4" />
               </button>

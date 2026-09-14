@@ -55,7 +55,7 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
     .select(`
       id, title, slug, lead_paragraph, content_html, read_time_minutes, 
       volume_no, issue_no, published_at, cover_image_url, views_count,
-      category_id,
+      category_id, article_format, location_country, location_region, location_city,
       users_extended ( persons ( full_name ) ),
       categories:categories!posts_category_id_fkey (name, slug),
       post_categories (
@@ -157,11 +157,19 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
           </figure>
         )}
         
-        <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-12 font-mono text-xs text-ledger-muted border-y border-ledger-border py-3">
-          <div>BY <Link href={`/author/${encodeURIComponent((record.users_extended as any)?.persons?.full_name || 'Quark Ledger')}`} className="hover:text-ledger-ink underline underline-offset-2">{(record.users_extended as any)?.persons?.full_name || 'Quark Ledger'}</Link></div>
-          <div>VOL. {record.volume_no} NO. {record.issue_no}</div>
-          <div>{new Date(record.published_at!).toLocaleDateString('en-US', { dateStyle: 'long' })}</div>
-          <div className="md:ml-auto">READ: {record.read_time_minutes}M / VIEWS: {record.views_count}</div>
+        <div className="flex flex-col md:flex-row md:items-center gap-4 md:gap-8 font-mono text-[11px] uppercase tracking-widest text-ledger-muted border-y-2 border-ledger-border py-4">
+          <div className="font-bold text-ledger-ink">
+            BY <Link href={`/author/${encodeURIComponent((record.users_extended as any)?.persons?.full_name || 'Quark Ledger')}`} className="hover:text-ledger-accent underline underline-offset-4 decoration-2">{(record.users_extended as any)?.persons?.full_name || 'Quark Ledger'}</Link>
+          </div>
+          <div className="flex items-center gap-4">
+            <span>VOL. {record.volume_no} NO. {record.issue_no}</span>
+            <span className="hidden md:inline">•</span>
+            <span>{new Date(record.published_at!).toLocaleDateString('en-US', { dateStyle: 'long' })}</span>
+          </div>
+          <div className="md:ml-auto flex items-center gap-4">
+            <span>{record.read_time_minutes}M READ</span>
+            <span>{record.views_count} VIEWS</span>
+          </div>
         </div>
 
         <SocialShareAndBookmark
@@ -182,13 +190,35 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
           </p>
 
           <div 
-            className="prose prose-ledger lg:prose-lg font-body max-w-none
-                       prose-p:leading-relaxed prose-headings:font-headline prose-headings:font-bold
-                       prose-pre:bg-[#0d1117] prose-pre:text-[#c9d1d9] prose-pre:p-4 prose-pre:rounded-md prose-pre:font-mono prose-code:font-mono
-                       first-letter:text-7xl first-letter:font-headline first-letter:font-bold first-letter:float-left first-letter:mr-4"
+            className="prose prose-ledger md:prose-lg max-w-prose mx-auto lg:mx-0
+                       font-[family:var(--font-tiro-bangla)] leading-loose text-[18px] md:text-[20px] text-ledger-ink/90
+                       prose-p:leading-loose prose-p:mb-8 prose-headings:font-headline prose-headings:font-bold prose-headings:font-[family:var(--font-anek-bangla)]
+                       prose-pre:bg-[#111] prose-pre:text-[#eee] prose-pre:p-5 prose-pre:rounded-none prose-pre:font-mono prose-code:font-mono
+                       prose-blockquote:border-l-4 prose-blockquote:border-black prose-blockquote:bg-gray-50 prose-blockquote:py-2 prose-blockquote:px-6 prose-blockquote:italic prose-blockquote:font-headline prose-blockquote:text-2xl prose-blockquote:text-black prose-blockquote:my-10
+                       first-letter:text-8xl first-letter:font-headline first-letter:font-black first-letter:text-black first-letter:float-left first-letter:mr-6 first-letter:mt-2 first-letter:leading-none"
             dangerouslySetInnerHTML={{ __html: sanitizedHtml }}
           />
 
+          {/* Metadata & Tags Section */}
+          <div className="mt-16 pt-8 border-t-2 border-black max-w-prose mx-auto lg:mx-0">
+            <h4 className="font-headline font-bold text-lg uppercase tracking-wider mb-4">Article Metadata</h4>
+            <div className="flex flex-wrap gap-2 mb-8">
+              {record.article_format && (
+                <span className="px-3 py-1 bg-black text-white font-mono text-[10px] font-bold uppercase tracking-widest">{record.article_format}</span>
+              )}
+              {record.location_country && (
+                <span className="px-3 py-1 bg-gray-200 text-black font-mono text-[10px] font-bold uppercase tracking-widest border border-gray-300">📍 {record.location_country}</span>
+              )}
+              {record.location_city && (
+                <span className="px-3 py-1 bg-gray-200 text-black font-mono text-[10px] font-bold uppercase tracking-widest border border-gray-300">{record.location_city}</span>
+              )}
+              {record.post_categories?.filter((pc: any) => !pc.is_primary).map((pc: any) => (
+                <Link key={pc.categories.id} href={`/category/${pc.categories.slug}`} className="px-3 py-1 bg-transparent text-black font-mono text-[10px] font-bold uppercase tracking-widest border border-black hover:bg-black hover:text-white transition-colors">
+                  {pc.categories.name}
+                </Link>
+              ))}
+            </div>
+          </div>
           <div className="mt-12 pt-6 border-t-2 border-ledger-ink">
             <div className="font-mono text-xs text-ledger-muted uppercase tracking-wider mb-2 font-bold">
               পড়া শেষ? আপনার বন্ধুদের সাথে শেয়ার করুন:

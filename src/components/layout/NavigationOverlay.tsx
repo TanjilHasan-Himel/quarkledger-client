@@ -129,7 +129,7 @@ export function NavigationOverlay({ categories }: NavigationOverlayProps) {
 
       {/* Fullscreen Overlay Menu */}
       <div 
-        className={`fixed inset-0 bg-[#12100E] z-40 flex flex-col items-center justify-center transition-all duration-500 origin-top ${isOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}
+        className={`fixed inset-0 bg-ledger-dark z-40 flex flex-col items-center justify-center transition-all duration-500 origin-top ${isOpen ? 'opacity-100 scale-y-100' : 'opacity-0 scale-y-0 pointer-events-none'}`}
       >
         {/* Decorative Grid Lines */}
         <div className="absolute inset-0 pointer-events-none opacity-8" style={{ backgroundImage: 'linear-gradient(#FF5722 1px, transparent 1px), linear-gradient(90deg, #FF5722 1px, transparent 1px)', backgroundSize: '48px 48px' }} />

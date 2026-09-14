@@ -114,9 +114,9 @@ export default async function BroadsheetHomePage() {
     categoryGroups.get(key)!.posts.push(post);
   }
 
-  // All active categories with at least 1 story get their own carousel section!
+  // Only show category carousel sections with at least 2 posts — a single-card carousel looks broken
   const activeCategorySections = Array.from(categoryGroups.values())
-    .filter(g => g.posts.length >= 1)
+    .filter(g => g.posts.length >= 2)
     .sort((a, b) => b.posts.length - a.posts.length);
 
   // 7. Themed Collection Package: STRICTLY filter for space/astronomy/cosmology stories
@@ -162,9 +162,6 @@ export default async function BroadsheetHomePage() {
         
         {/* 3. Hero Two-Slot Block (1 Dominant Big Story + 1 Companion from different category) */}
         <HeroTwoSlot dominant={dominantHero} companion={companionHero} />
-
-        {/* 4. Newsletter Micro-Banner (Thin, Lightweight 1-Line Reminder) */}
-        <NewsletterMicroBanner />
 
         {/* Centered Main Editorial Container */}
         <div className="max-w-[1400px] w-full mx-auto px-4 md:px-8 pt-12 space-y-16">

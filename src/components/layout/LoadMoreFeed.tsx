@@ -64,7 +64,7 @@ export function LoadMoreFeed({ initialOffset, initialHasMore, categoryId, author
           <button 
             onClick={loadMore}
             disabled={loading}
-            className="bg-[#FF5722] hover:bg-[#FFAB91] hover:text-[#1C1917] text-white px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-widest transition-colors shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer"
+            className="bg-ledger-orange hover:bg-ledger-orange-light hover:text-ledger-ink text-white px-8 py-3.5 font-mono text-xs font-bold uppercase tracking-widest transition-colors shadow-md hover:shadow-lg disabled:opacity-50 cursor-pointer"
           >
             {loading ? 'অনুসন্ধান চলছে...' : '+ আরও প্রতিবেদন লোড করুন'}
           </button>

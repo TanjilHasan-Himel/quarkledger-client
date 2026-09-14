@@ -11,13 +11,26 @@
 }
 
 @theme inline {
-  --color-ledger-paper: #F4EFE6;
+  --color-ledger-paper: #FFFFFF;
   --color-ledger-ink: #1C1917;
-  --color-ledger-border: #D3CBBE;
+  --color-ledger-sand: #F8F9FA;
+  --color-ledger-border: #E5E7EB;
   --color-ledger-borderDark: #8A8275;
   --color-ledger-accent: #C4430E;
   --color-ledger-amber: #FFA94D;
   --color-ledger-muted: #666055;
+
+  /* Surface & Control tokens — replaces scattered hardcoded hex values */
+  --color-ledger-surface: #FCF8F0;   /* lightest bg: ticker, input areas */
+  --color-ledger-sand: #F5EFE4;      /* warm sand: clock cell, read-time badge */
+  --color-ledger-control: #EDE8DC;   /* carousel/archive control buttons */
+  --color-ledger-image: #F5F2EC;     /* image placeholder bg */
+  --color-ledger-dark: #12100E;      /* footer & overlay dark bg */
+
+  /* Brand action colors — replaces var(--orange) / var(--amber-warm) patterns */
+  --color-ledger-orange: #FF5722;        /* primary action, hover, tags */
+  --color-ledger-orange-light: #FFAB91;  /* hover state for filled orange buttons */
+  --color-ledger-amber-warm: #FFA94D;    /* hero CTA, footer headings */
 
   --font-science-gothic: 'Science Gothic', sans-serif;
   --font-english-display: var(--font-science-gothic), var(--font-playfair-display), Georgia, serif;
@@ -74,10 +87,6 @@ body {
   background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-body);
-  /* Tactile Newsprint Subtle Grain */
-  background-image: radial-gradient(var(--color-ledger-borderDark) 0.5px, transparent 0.5px);
-  background-size: 16px 16px;
-  background-position: 0 0;
   text-rendering: optimizeLegibility;
 }
 
@@ -95,36 +104,33 @@ body {
 }
 
 /* ========================================================
-   TAG COMPONENT WITH GLAZE (Glossy Diagonal Accent)
-   Lives ONLY inside the .tag component
+   EDITORIAL TAG COMPONENT
+   Clean, flat, refined aesthetic (no cheap gradients)
    ======================================================== */
 .tag {
-  --ink: color-mix(in srgb, var(--cat, var(--orange)) 35%, black);
-  --light: color-mix(in srgb, var(--cat, var(--orange)) 45%, white);
-  background: linear-gradient(135deg, var(--light), var(--cat, var(--orange)) 65%);
-  color: var(--ink);
+  --base-color: var(--cat, var(--color-ledger-orange));
+  background-color: color-mix(in srgb, var(--base-color) 8%, transparent);
+  color: color-mix(in srgb, var(--base-color) 80%, black);
+  border: 1px solid color-mix(in srgb, var(--base-color) 25%, transparent);
   position: relative;
-  overflow: hidden;
   display: inline-flex;
   align-items: center;
   font-family: var(--font-mono);
   font-size: 10px;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.08em;
-  padding: 2.5px 8.5px;
-  border-radius: 2px;
-  box-shadow: 0 1px 2px rgba(0, 0, 0, 0.12);
+  letter-spacing: 0.1em;
+  padding: 3px 8px;
+  transition: all 0.2s ease;
 }
 
-/* Glaze: tiny diagonal gloss lives ONLY inside the .tag component */
-.tag::after {
-  content: '';
-  position: absolute;
-  inset: 0;
-  background: linear-gradient(115deg, transparent 35%, rgba(255, 255, 255, 0.5) 50%, transparent 65%);
-  pointer-events: none;
+.tag:hover {
+  background-color: var(--base-color);
+  color: white;
+  border-color: var(--base-color);
 }
+
+
 
 /* ========================================================
    GRAIN EFFECT: Hero card + dark section bands only

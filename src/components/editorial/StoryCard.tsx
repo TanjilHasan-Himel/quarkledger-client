@@ -14,6 +14,17 @@ export interface StoryCardPost {
   published_at: string;
   categories?: any;
   post_categories?: any;
+  article_format?: string | null;
+  location_country?: string | null;
+}
+
+function FormatBadge({ format }: { format?: string | null }) {
+  if (!format || format.toLowerCase() === 'news') return null;
+  return (
+    <span className="font-mono text-[9px] uppercase tracking-widest text-[#FF5722] border border-[#FF5722]/30 px-1.5 py-0.5 rounded-sm bg-[#FF5722]/5">
+      {format}
+    </span>
+  );
 }
 
 interface StoryCardProps {
@@ -73,9 +84,10 @@ function getCategoryTopicClass(slugOrName?: string | null): string {
 }
 
 export function StoryCard({ post, variant = 'standard', priority = false }: StoryCardProps) {
+  // Resolve primary category — no 'WIRE' ghost label
   const categoryName = Array.isArray(post.categories)
-    ? post.categories[0]?.name || 'WIRE'
-    : (post.categories as any)?.name || 'WIRE';
+    ? post.categories[0]?.name || ''
+    : (post.categories as any)?.name || '';
   const categorySlug = Array.isArray(post.categories)
     ? post.categories[0]?.slug || ''
     : (post.categories as any)?.slug || '';
@@ -88,23 +100,13 @@ export function StoryCard({ post, variant = 'standard', priority = false }: Stor
   const catColorVar = getCategoryColorVar(categorySlug || categoryName);
   const topicClass = getCategoryTopicClass(categorySlug || categoryName);
 
-  // Extract secondary categories if any
-  const rawPostCats = Array.isArray(post.post_categories) ? post.post_categories : [];
-  const secondaryCategories: Array<{ id?: string; name: string; slug?: string }> = rawPostCats
-    .map((pc: any) => {
-      const cat = Array.isArray(pc?.categories) ? pc.categories[0] : pc?.categories;
-      return cat;
-    })
-    .filter((cat: any) => cat && cat.name && cat.name !== categoryName)
-    .slice(0, 2);
-
   if (variant === 'horizontal') {
     return (
       <article 
         className={`card relative bg-white border border-ledger-border p-4 flex flex-col md:flex-row gap-5 group overflow-hidden ${topicClass}`}
         style={{ '--cat': catColorVar } as React.CSSProperties}
       >
-        <div className="relative w-full md:w-48 aspect-[16/10] shrink-0 overflow-hidden border border-ledger-border bg-[#F5F2EC]">
+        <div className="relative w-full md:w-48 aspect-[16/10] shrink-0 overflow-hidden border border-ledger-border bg-ledger-image">
           {post.cover_image_url ? (
             <Image
               src={post.cover_image_url}
@@ -122,17 +124,23 @@ export function StoryCard({ post, variant = 'standard', priority = false }: Stor
         </div>
 
         <div className="flex flex-col flex-1">
-          <div className="flex items-center flex-wrap gap-2 mb-2">
-            <span className="tag">
-              {categoryName}
-            </span>
-            {secondaryCategories.map(cat => (
-              <span key={cat.slug || cat.name} className="font-mono text-[9px] bg-[#F4EFE6] text-ledger-muted px-1.5 py-0.5 border border-ledger-border/80">
-                {cat.name}
-              </span>
-            ))}
-            <span className="font-mono text-[10px] text-ledger-muted ml-auto">
-              {post.read_time_minutes || 4}মিনিট পাঠ
+          {/* Tag row: category pill on left, read time on right — clean, no secondary clutter */}
+          <div className="flex items-center justify-between gap-2 mb-2.5">
+            {categoryName && (
+              <div className="flex items-center gap-2">
+                <Link
+                  href={categorySlug ? `/category/${categorySlug}` : '#'}
+                  className="tag"
+                  style={{ '--cat': catColorVar } as React.CSSProperties}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {categoryName}
+                </Link>
+                <FormatBadge format={post.article_format} />
+              </div>
+            )}
+            <span className="font-mono text-[10px] text-ledger-muted shrink-0 ml-auto">
+              {post.read_time_minutes || 4} মিনিট
             </span>
           </div>
 
@@ -161,7 +169,7 @@ export function StoryCard({ post, variant = 'standard', priority = false }: Stor
         style={{ '--cat': catColorVar } as React.CSSProperties}
       >
         {post.cover_image_url && (
-          <div className="relative w-20 h-20 shrink-0 overflow-hidden border border-ledger-border bg-[#F5F2EC]">
+          <div className="relative w-20 h-20 shrink-0 overflow-hidden border border-ledger-border bg-ledger-image">
             <Image
               src={post.cover_image_url}
               alt={post.title}
@@ -172,9 +180,19 @@ export function StoryCard({ post, variant = 'standard', priority = false }: Stor
         )}
         <div className="flex flex-col flex-1 min-w-0">
           <div className="flex items-center gap-1.5 mb-1.5">
-            <span className="tag text-[9px] py-0.5 px-1.5">
-              {categoryName}
-            </span>
+            {categoryName && (
+              <div className="flex items-center gap-1.5">
+                <Link
+                  href={categorySlug ? `/category/${categorySlug}` : '#'}
+                  className="tag text-[9px] py-0.5 px-1.5"
+                  style={{ '--cat': catColorVar } as React.CSSProperties}
+                  onClick={(e) => e.stopPropagation()}
+                >
+                  {categoryName}
+                </Link>
+                <FormatBadge format={post.article_format} />
+              </div>
+            )}
             <span className="font-mono text-[9px] text-ledger-muted ml-auto">
               {post.read_time_minutes || 4} মিনিট
             </span>
@@ -199,23 +217,26 @@ export function StoryCard({ post, variant = 'standard', priority = false }: Stor
       <div>
         {/* Card Header: Category & Read Time (Fixed single line, no wrapping) */}
         <div className="flex items-center justify-between gap-2 mb-3 h-7 overflow-hidden">
-          <div className="flex items-center gap-1.5 min-w-0 overflow-hidden">
-            <span className="tag shrink-0">
-              {categoryName}
-            </span>
-            {secondaryCategories.length > 0 && (
-              <span className="font-mono text-[9px] bg-[#F4EFE6] text-ledger-muted px-1.5 py-0.5 border border-ledger-border/80 truncate max-w-[110px]">
-                {secondaryCategories[0].name}
-              </span>
-            )}
-          </div>
-          <span className="font-mono text-[10px] font-bold text-ledger-ink bg-[#F5EFE4] border border-ledger-border px-2 py-0.5 shrink-0">
+          {categoryName && (
+            <div className="flex items-center gap-2 shrink-0">
+              <Link
+                href={categorySlug ? `/category/${categorySlug}` : '#'}
+                className="tag"
+                style={{ '--cat': catColorVar } as React.CSSProperties}
+                onClick={(e) => e.stopPropagation()}
+              >
+                {categoryName}
+              </Link>
+              <FormatBadge format={post.article_format} />
+            </div>
+          )}
+          <span className="font-mono text-[10px] font-bold text-ledger-ink bg-ledger-sand border border-ledger-border px-2 py-0.5 shrink-0">
             {post.read_time_minutes || 5} MIN
           </span>
         </div>
 
         {/* Image or Editorial Branded Placeholder (Locked 16:9 ratio) */}
-        <div className="relative w-full aspect-video mb-3.5 overflow-hidden border border-ledger-border bg-[#F5F2EC] shrink-0">
+        <div className="relative w-full aspect-video mb-3.5 overflow-hidden border border-ledger-border bg-ledger-image shrink-0">
           {post.cover_image_url ? (
             <Image
               src={post.cover_image_url}
@@ -228,8 +249,8 @@ export function StoryCard({ post, variant = 'standard', priority = false }: Stor
           ) : (
             <div className="absolute inset-0 bg-gradient-to-br from-[#1A1816] via-[#2A2320] to-[#140204] flex flex-col items-center justify-center p-6 text-center select-none group-hover:scale-102 transition-transform duration-500">
               <div className="absolute inset-0 opacity-20" style={{ backgroundImage: 'radial-gradient(#FF5722 1px, transparent 1px)', backgroundSize: '16px 16px' }} />
-              <span className="font-mono text-[9px] uppercase tracking-widest text-[#FF5722] font-bold z-10 mb-1.5">
-                QUARK LEDGER · DISPATCH
+              <span className="font-[family:var(--font-press-start)] text-[7px] uppercase tracking-tight text-[#FF5722] font-bold z-10 mb-3 leading-relaxed">
+                QUARK{'\n'}LEDGER
               </span>
               <span className="font-headline font-bold text-sm text-white/90 line-clamp-2 z-10">
                 {post.title}
@@ -240,7 +261,7 @@ export function StoryCard({ post, variant = 'standard', priority = false }: Stor
 
         {/* Title: Clamped to 3 lines with fixed block height for perfect horizontal row alignment */}
         <h3 className="text-lg md:text-xl font-headline font-bold leading-snug mb-2 text-ledger-ink transition-colors line-clamp-3 h-[4.35rem]">
-          <Link href={`/record/${post.slug}`} className="group-hover:text-[#FF5722] transition-colors">
+          <Link href={`/record/${post.slug}`} className="group-hover:text-ledger-orange transition-colors">
             {post.title}
           </Link>
         </h3>

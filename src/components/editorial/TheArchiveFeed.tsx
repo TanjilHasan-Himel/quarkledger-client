@@ -134,11 +134,11 @@ export function TheArchiveFeed({ initialPosts, totalAvailableCount = 7 }: TheArc
   return (
     <section id="the-feed" className="w-full mt-12 mb-16 scroll-mt-20">
       {/* Feed Controls Header */}
-      <div className="bg-[#EFE8DC] border border-ledger-border p-5 md:p-6 mb-8">
+      <div className="bg-ledger-control border border-ledger-border p-5 md:p-6 mb-8">
         {/* Brand Trust Meta Line */}
         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 border-b border-ledger-border/80 pb-4 mb-5">
           <div>
-            <span className="font-mono text-[11px] uppercase tracking-widest text-[#FF5722] font-bold block mb-1">
+            <span className="font-mono text-[11px] uppercase tracking-widest text-ledger-orange font-bold block mb-1">
               ● সম্পূর্ণ আর্কাইভ ব্রাউজার (The Feed)
             </span>
             <h3 className="text-2xl md:text-3xl font-headline font-bold text-ledger-ink">
@@ -162,7 +162,7 @@ export function TheArchiveFeed({ initialPosts, totalAvailableCount = 7 }: TheArc
               disabled={!canScrollLeft}
               aria-label="পূর্ববর্তী বিষয়সমূহ"
               title="পূর্ববর্তী বিষয়সমূহ"
-              className="w-7 h-7 border border-ledger-borderDark bg-white hover:bg-[#FF5722] hover:border-[#FF5722] hover:text-white text-ledger-ink transition-all active:scale-90 disabled:opacity-25 disabled:hover:bg-white disabled:hover:border-ledger-borderDark disabled:hover:text-ledger-ink cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
+              className="w-7 h-7 border border-ledger-borderDark bg-white hover:bg-ledger-orange hover:border-ledger-orange hover:text-white text-ledger-ink transition-all active:scale-90 disabled:opacity-25 disabled:hover:bg-white disabled:hover:border-ledger-borderDark disabled:hover:text-ledger-ink cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
             >
               <ChevronLeft className="w-4 h-4" />
             </button>
@@ -186,13 +186,13 @@ export function TheArchiveFeed({ initialPosts, totalAvailableCount = 7 }: TheArc
                     }}
                     className={`px-3 py-1.5 text-xs font-mono font-bold uppercase transition-all cursor-pointer border whitespace-nowrap active:scale-95 active:translate-y-[1px] shadow-2xs flex items-center gap-1.5 shrink-0 ${
                       isActive
-                        ? 'bg-ledger-ink text-white border-ledger-ink ring-1 ring-[#FF5722]'
-                        : 'bg-white text-ledger-ink border-ledger-border hover:border-[#FF5722] hover:text-[#FF5722]'
+                        ? 'bg-ledger-ink text-white border-ledger-ink ring-1 ring-ledger-orange'
+                        : 'bg-white text-ledger-ink border-ledger-border hover:border-ledger-orange hover:text-ledger-orange'
                     }`}
                   >
                     <span>{t.label}</span>
                     <span className={`text-[10px] px-1 py-0.2 rounded-xs font-mono font-bold ${
-                      isActive ? 'bg-[#FF5722] text-white' : 'bg-[#EDE7DA] text-ledger-muted'
+                      isActive ? 'bg-ledger-orange text-white' : 'bg-ledger-control text-ledger-muted'
                     }`}>
                       {t.count}
                     </span>
@@ -208,7 +208,7 @@ export function TheArchiveFeed({ initialPosts, totalAvailableCount = 7 }: TheArc
               disabled={!canScrollRight}
               aria-label="পরবর্তী বিষয়সমূহ"
               title="পরবর্তী বিষয়সমূহ"
-              className="w-7 h-7 border border-ledger-borderDark bg-white hover:bg-[#FF5722] hover:border-[#FF5722] hover:text-white text-ledger-ink transition-all active:scale-90 disabled:opacity-25 disabled:hover:bg-white disabled:hover:border-ledger-borderDark disabled:hover:text-ledger-ink cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
+              className="w-7 h-7 border border-ledger-borderDark bg-white hover:bg-ledger-orange hover:border-ledger-orange hover:text-white text-ledger-ink transition-all active:scale-90 disabled:opacity-25 disabled:hover:bg-white disabled:hover:border-ledger-borderDark disabled:hover:text-ledger-ink cursor-pointer flex items-center justify-center shrink-0 shadow-2xs"
             >
               <ChevronRight className="w-4 h-4" />
             </button>
@@ -220,7 +220,7 @@ export function TheArchiveFeed({ initialPosts, totalAvailableCount = 7 }: TheArc
             <select
               value={sortOrder}
               onChange={(e) => setSortOrder(e.target.value as any)}
-              className="border border-ledger-ink bg-white p-1.5 font-mono text-xs focus:outline-none focus:border-[#FF5722] cursor-pointer shadow-2xs"
+              className="border border-ledger-ink bg-white p-1.5 font-mono text-xs focus:outline-none focus:border-ledger-orange cursor-pointer shadow-2xs"
             >
               <option value="newest">সর্বশেষ প্রকাশিত</option>
               <option value="read_time">দীর্ঘতম পাঠ (গবেষণা)</option>
@@ -253,7 +253,7 @@ export function TheArchiveFeed({ initialPosts, totalAvailableCount = 7 }: TheArc
             type="button"
             onClick={handleLoadMore}
             disabled={loadingMore}
-            className="px-8 py-3 bg-ledger-paper border-2 border-ledger-ink text-ledger-ink font-mono text-xs font-bold uppercase tracking-wider hover:border-[#FF5722] hover:bg-[#FF5722] hover:text-white transition-all cursor-pointer disabled:opacity-50 active:scale-95 active:translate-y-[1px] shadow-sm flex items-center gap-2"
+            className="px-8 py-3 bg-ledger-paper border-2 border-ledger-ink text-ledger-ink font-mono text-xs font-bold uppercase tracking-wider hover:border-ledger-orange hover:bg-ledger-orange hover:text-white transition-all cursor-pointer disabled:opacity-50 active:scale-95 active:translate-y-[1px] shadow-sm flex items-center gap-2"
           >
             <span>{loadingMore ? 'লোড করা হচ্ছে...' : 'আরও প্রতিবেদন লোড করুন'}</span>
             <span>{loadingMore ? '⏳' : '↓'}</span>

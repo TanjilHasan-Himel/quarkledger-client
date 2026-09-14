@@ -50,11 +50,11 @@ export function BreakingTicker({ items = [] }: { items?: TickerItem[] }) {
   ];
 
   return (
-    <div className="w-full bg-[#FCF8F0] text-ledger-ink border-b-2 border-ledger-border flex flex-col md:flex-row items-stretch md:items-center overflow-hidden">
+    <div className="w-full bg-ledger-surface text-ledger-ink border-b-2 border-ledger-border flex flex-col md:flex-row items-stretch md:items-center overflow-hidden">
       
       {/* Compact 7-Segment Digital Clock (No orange block, no TIME text, no dot) */}
       <div 
-        className="px-3.5 h-10 md:h-11 flex items-center justify-center shrink-0 border-b md:border-b-0 md:border-r border-ledger-border bg-[#F5EFE4] text-ledger-ink select-none"
+        className="px-3.5 h-10 md:h-11 flex items-center justify-center shrink-0 border-b md:border-b-0 md:border-r border-ledger-border bg-ledger-sand text-ledger-ink select-none"
         title="লাইভ ঘড়ি / Live Clock"
       >
         <div className="flex items-baseline gap-1">
@@ -72,7 +72,7 @@ export function BreakingTicker({ items = [] }: { items?: TickerItem[] }) {
       </div>
 
       {/* Marquee Ticker Track */}
-      <div className="relative w-full overflow-hidden flex items-center font-headline font-bold text-sm md:text-base border-b md:border-b-0 md:border-r border-ledger-border h-10 md:h-11">
+      <div className="relative w-full overflow-hidden flex items-center font-headline font-bold text-sm md:text-base border-b md:border-b-0 h-10 md:h-11">
         {/* The single wrapper that animates, holding exactly two copies for a seamless 50% translation */}
         <div className="flex whitespace-nowrap animate-[marquee_60s_linear_infinite] hover:[animation-play-state:paused] w-max items-center h-full">
           {/* Copy 1 */}
@@ -81,10 +81,10 @@ export function BreakingTicker({ items = [] }: { items?: TickerItem[] }) {
               <Link 
                 key={`a-${item.id}-${idx}`} 
                 href={`/record/${item.slug}`} 
-                className="inline-flex items-center gap-2 hover:text-[#FF5722] px-4 transition-colors"
+                className="inline-flex items-center gap-2 hover:text-ledger-orange px-4 transition-colors"
               >
                 <span>{item.title}</span>
-                <span className="text-[#FF5722]/50 font-mono mx-2">+++</span>
+                <span className="text-ledger-orange/50 font-mono mx-2">+++</span>
               </Link>
             ))}
           </div>
@@ -94,28 +94,13 @@ export function BreakingTicker({ items = [] }: { items?: TickerItem[] }) {
               <Link 
                 key={`b-${item.id}-${idx}`} 
                 href={`/record/${item.slug}`} 
-                className="inline-flex items-center gap-2 hover:text-[#FF5722] px-4 transition-colors"
+                className="inline-flex items-center gap-2 hover:text-ledger-orange px-4 transition-colors"
               >
                 <span>{item.title}</span>
-                <span className="text-[#FF5722]/50 font-mono mx-2">+++</span>
+                <span className="text-ledger-orange/50 font-mono mx-2">+++</span>
               </Link>
             ))}
           </div>
-        </div>
-      </div>
-
-      {/* Share / Email form */}
-      <div className="flex items-center gap-2 shrink-0 px-4 py-2 md:w-[360px] bg-[#F5EFE4]">
-        <span className="font-mono text-[10px] font-bold uppercase tracking-widest whitespace-nowrap text-ledger-ink">নিউজলেটার:</span>
-        <div className="flex w-full h-7 border border-ledger-border bg-white">
-          <input 
-            type="email" 
-            placeholder="ইমেইল লিখুন" 
-            className="w-full bg-transparent px-2 font-mono text-[10px] outline-none placeholder:text-ledger-muted/60 text-ledger-ink"
-          />
-          <button className="bg-[#FF5722] text-white px-3 font-mono text-[10px] font-bold uppercase hover:bg-[#FFAB91] hover:text-[#1C1917] transition-all active:scale-95 active:translate-y-[1px] cursor-pointer">
-            যুক্ত হন
-          </button>
         </div>
       </div>
 

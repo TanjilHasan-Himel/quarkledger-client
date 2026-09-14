@@ -4,6 +4,7 @@ import "./globals.css";
 import "katex/dist/katex.min.css";
 import "highlight.js/styles/github-dark.css";
 import { NewsletterSection } from '@/components/layout/NewsletterSection';
+import { createServerClient } from '@/lib/supabase/server';
 import Link from 'next/link';
 
 const playfairDisplay = Playfair_Display({
@@ -52,16 +53,20 @@ export const metadata: Metadata = {
   title: "Quark Ledger — সমকালীন জিজ্ঞাসা ও বৈজ্ঞানিক অনুসন্ধান",
   description: "সমকালীন জিজ্ঞাসা, বৈজ্ঞানিক অনুসন্ধান ও বৈশ্বিক সংবাদ প্রবাহের ডিজিটাল মহাফেজখানা।",
   icons: {
-    icon: [
-      { url: '/tabQuark.jpg' },
-      { url: '/icon.jpg' },
-    ],
+    icon: '/tabQuark.jpg',
     shortcut: '/tabQuark.jpg',
     apple: '/tabQuark.jpg',
   },
 };
 
-export default function RootLayout({ children }: { children: React.ReactNode }) {
+export default async function RootLayout({ children }: { children: React.ReactNode }) {
+  // Fetch categories server-side for dynamic footer — replaces hardcoded slugs
+  const supabase = await createServerClient();
+  const { data: footerCategories } = await supabase
+    .from('categories')
+    .select('id, name, slug')
+    .order('name')
+    .limit(6);
   return (
     <html lang="bn" className={`${playfairDisplay.variable} ${tiroBangla.variable} ${pressStart.variable} ${anekBangla.variable} ${hindSiliguri.variable} ${jetbrainsMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-body selection:bg-ledger-accent selection:text-white bg-ledger-paper">
@@ -73,7 +78,7 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
         <NewsletterSection />
 
         {/* Tactile Broadsheet Footer */}
-        <footer className="w-full bg-[#12100E] text-[#F4EFE6] relative pt-12 pb-8 px-6 font-mono">
+        <footer className="w-full bg-ledger-dark text-ledger-paper relative pt-12 pb-8 px-6 font-mono">
           {/* Top Tech Orange Hairline */}
           <div className="absolute top-0 left-0 right-0 h-1 bg-[#FF5722]" />
           
@@ -88,20 +93,25 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
             </div>
 
             <div>
-              <h3 className="text-xs uppercase font-bold tracking-widest text-[#FFA94D] mb-4 border-b border-white/20 pb-1">
+              <h3 className="text-xs uppercase font-bold tracking-widest text-ledger-amber-warm mb-4 border-b border-white/20 pb-1">
                 বিভাগসমূহ
               </h3>
               <ul className="space-y-2 text-xs text-white/80">
-                <li><Link href="/category/ai" className="hover:text-[#FFA94D] transition-colors">এআই ও প্রযুক্তি</Link></li>
-                <li><Link href="/category/space" className="hover:text-[#FFA94D] transition-colors">মহাকাশ ও বিজ্ঞান</Link></li>
-                <li><Link href="/category/bangladesh" className="hover:text-[#FFA94D] transition-colors">বাংলাদেশ ও জাতীয়</Link></li>
-                <li><Link href="/category/world" className="hover:text-[#FFA94D] transition-colors">আন্তর্জাতিক সংবাদ</Link></li>
-                <li><Link href="/category/economy" className="hover:text-[#FFA94D] transition-colors">অর্থনীতি ও ব্যবসা</Link></li>
+                {(footerCategories || []).map((cat) => (
+                  <li key={cat.id}>
+                    <Link
+                      href={`/category/${cat.slug}`}
+                      className="hover:text-ledger-amber-warm transition-colors"
+                    >
+                      {cat.name}
+                    </Link>
+                  </li>
+                ))}
               </ul>
             </div>
 
             <div>
-              <h3 className="text-xs uppercase font-bold tracking-widest text-[#FFA94D] mb-4 border-b border-white/20 pb-1">
+              <h3 className="text-xs uppercase font-bold tracking-widest text-ledger-amber-warm mb-4 border-b border-white/20 pb-1">
                 লিখতে চান? যোগাযোগ করুন
               </h3>
               <p className="text-xs text-white/70 leading-relaxed mb-4">
@@ -110,11 +120,11 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               <div className="space-y-2 text-xs">
                 <div>
                   <span className="text-white/50">ইমেইল: </span>
-                  <a href="mailto:contact@quarkledger.com" className="text-[#FFA94D] hover:underline">contact@quarkledger.com</a>
+                  <a href="mailto:contact@quarkledger.com" className="text-ledger-amber-warm hover:underline">contact@quarkledger.com</a>
                 </div>
                 <div>
                   <span className="text-white/50">লেখা পাঠান: </span>
-                  <a href="mailto:editor@quarkledger.com" className="text-[#FFA94D] hover:underline">editor@quarkledger.com</a>
+                  <a href="mailto:editor@quarkledger.com" className="text-ledger-amber-warm hover:underline">editor@quarkledger.com</a>
                 </div>
               </div>
             </div>
@@ -125,13 +135,13 @@ export default function RootLayout({ children }: { children: React.ReactNode }) 
               © ২০২৬ কোয়ার্ক লেজার (Quark Ledger) · বিজ্ঞান ও সমসাময়িক তথ্যের উন্মুক্ত পোর্টাল।
             </div>
             <div className="flex items-center gap-4 text-xs text-white/70">
-              <Link href="/category/science" className="hover:text-[#FFA94D]">বিজ্ঞান</Link>
+              <Link href="/category/science" className="hover:text-ledger-amber-warm">বিজ্ঞান</Link>
               <span>·</span>
-              <Link href="/category/technology" className="hover:text-[#FFA94D]">প্রযুক্তি</Link>
+              <Link href="/category/technology" className="hover:text-ledger-amber-warm">প্রযুক্তি</Link>
               <span>·</span>
-              <Link href="/category/ai" className="hover:text-[#FFA94D]">এআই</Link>
+              <Link href="/category/ai" className="hover:text-ledger-amber-warm">এআই</Link>
               <span>·</span>
-              <a href="mailto:contact@quarkledger.com" className="hover:text-[#FFA94D]">যোগাযোগ</a>
+              <a href="mailto:contact@quarkledger.com" className="hover:text-ledger-amber-warm">যোগাযোগ</a>
             </div>
           </div>
         </footer>
