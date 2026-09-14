@@ -1,7 +1,7 @@
 import { createServerClient } from '@/lib/supabase/server';
 import { GrandMasthead } from '@/components/layout/GrandMasthead';
 import { BreakingTicker } from '@/components/layout/BreakingTicker';
-import { HeroTwoSlot } from '@/components/editorial/HeroTwoSlot';
+import { AnimatedSplitHero } from '@/components/editorial/AnimatedSplitHero';
 import { NewsletterMicroBanner } from '@/components/editorial/NewsletterMicroBanner';
 import { SectionHeader } from '@/components/editorial/SectionHeader';
 import { StoryGrid } from '@/components/editorial/StoryGrid';
@@ -160,8 +160,8 @@ export default async function BroadsheetHomePage() {
 
       <main className="flex-1 w-full flex flex-col pb-20">
         
-        {/* 3. Hero Two-Slot Block (1 Dominant Big Story + 1 Companion from different category) */}
-        <HeroTwoSlot dominant={dominantHero} companion={companionHero} />
+        {/* 3. New Animated Split Hero Section */}
+        <AnimatedSplitHero leftPost={dominantHero as any} rightPost={companionHero as any} />
 
         {/* Centered Main Editorial Container */}
         <div className="max-w-[1400px] w-full mx-auto px-4 md:px-8 pt-12 space-y-16">
