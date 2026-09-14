@@ -49,7 +49,18 @@ export async function generateMetadata({ params }: { params: Promise<{ slug: str
 
 export default async function RecordPage({ params }: { params: Promise<{ slug: string }> }) {
   const resolvedParams = await params;
-  const decodedSlug = decodeURIComponent(resolvedParams.slug);
+  // Next.js App Router already decodes the slug param. Using decodeURIComponent again
+  // on a pre-decoded Bengali Unicode slug causes a double-decode crash on Vercel.
+  // We try it safely and fall back to the raw value.
+  const decodedSlug = (() => {
+    try {
+      // Only decode if it still looks percent-encoded
+      const raw = resolvedParams.slug;
+      return raw.includes('%') ? decodeURIComponent(raw) : raw;
+    } catch {
+      return resolvedParams.slug;
+    }
+  })();
   const supabase = await createServerClient();
 
   // Fetch the main article
