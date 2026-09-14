@@ -212,7 +212,7 @@ export default async function RecordPage({ params }: { params: Promise<{ slug: s
               {record.location_city && (
                 <span className="px-3 py-1 bg-gray-200 text-black font-mono text-[10px] font-bold uppercase tracking-widest border border-gray-300">{record.location_city}</span>
               )}
-              {record.post_categories?.filter((pc: any) => !pc.is_primary).map((pc: any) => (
+              {(record.post_categories || []).filter((pc: any) => !pc.is_primary).map((pc: any) => (
                 <Link key={pc.categories.id} href={`/category/${pc.categories.slug}`} className="px-3 py-1 bg-transparent text-black font-mono text-[10px] font-bold uppercase tracking-widest border border-black hover:bg-black hover:text-white transition-colors">
                   {pc.categories.name}
                 </Link>
