@@ -12,19 +12,11 @@ import { TheArchiveFeed } from '@/components/editorial/TheArchiveFeed';
 import { StoryCardPost } from '@/components/editorial/StoryCard';
 import { VerticalTicker } from '@/components/editorial/VerticalTicker';
 
-import { createClient } from '@supabase/supabase-js';
-
 export const dynamic = 'force-dynamic';
 
 export default async function BroadsheetHomePage() {
   const supabase = await createServerClient();
   
-  // Use service role key to bypass RLS for fetching publication settings
-  const adminSupabase = createClient(
-    process.env.NEXT_PUBLIC_SUPABASE_URL!,
-    process.env.SUPABASE_SERVICE_ROLE_KEY!
-  );
-
   // 1. Fetch Ticker Items, Posts Catalog & Publication Settings in Parallel
   const [tickerRes, postsRes, pubRes] = await Promise.all([
     supabase
@@ -48,7 +40,7 @@ export default async function BroadsheetHomePage() {
       .eq('status', 'published')
       .order('published_at', { ascending: false, nullsFirst: false })
       .limit(40),
-    adminSupabase
+    supabase
       .from('publications')
       .select('settings')
       .eq('id', 'a0000000-0000-0000-0000-000000000001')
