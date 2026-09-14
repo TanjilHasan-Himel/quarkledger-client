@@ -12,7 +12,8 @@ import { TheArchiveFeed } from '@/components/editorial/TheArchiveFeed';
 import { StoryCardPost } from '@/components/editorial/StoryCard';
 import { VerticalTicker } from '@/components/editorial/VerticalTicker';
 
-export const dynamic = 'force-dynamic';
+// ISR: Revalidate the page every 60 seconds to enable Edge Caching and prevent DB quota exhaustion
+export const revalidate = 60;
 
 export default async function BroadsheetHomePage() {
   const supabase = await createServerClient();
