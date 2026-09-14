@@ -72,8 +72,9 @@ export default async function RootLayout({ children }: { children: React.ReactNo
   const { data: footerCategories } = await supabase
     .from('categories')
     .select('id, name, slug')
-    .order('name')
-    .limit(6);
+    .eq('depth', 0)
+    .order('display_order', { ascending: true })
+    .limit(8);
   return (
     <html lang="bn" className={`${playfairDisplay.variable} ${tiroBangla.variable} ${pressStart.variable} ${anekBangla.variable} ${hindSiliguri.variable} ${jetbrainsMono.variable} ${shareTechMono.variable} h-full antialiased`}>
       <body className="min-h-full flex flex-col font-body selection:bg-ledger-accent selection:text-white bg-ledger-paper">

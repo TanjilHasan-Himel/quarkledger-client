@@ -10,11 +10,20 @@ import { ThemedCollectionModule } from '@/components/editorial/ThemedCollectionM
 import { InlineNewsletterModule } from '@/components/editorial/InlineNewsletterModule';
 import { TheArchiveFeed } from '@/components/editorial/TheArchiveFeed';
 import { StoryCardPost } from '@/components/editorial/StoryCard';
+import { VerticalTicker } from '@/components/editorial/VerticalTicker';
+
+import { createClient } from '@supabase/supabase-js';
 
 export const dynamic = 'force-dynamic';
 
 export default async function BroadsheetHomePage() {
   const supabase = await createServerClient();
+  
+  // Use service role key to bypass RLS for fetching publication settings
+  const adminSupabase = createClient(
+    process.env.NEXT_PUBLIC_SUPABASE_URL!,
+    process.env.SUPABASE_SERVICE_ROLE_KEY!
+  );
 
   // 1. Fetch Ticker Items, Posts Catalog & Publication Settings in Parallel
   const [tickerRes, postsRes, pubRes] = await Promise.all([
@@ -22,9 +31,8 @@ export default async function BroadsheetHomePage() {
       .from('posts')
       .select('id, title, slug')
       .eq('status', 'published')
-      .not('published_at', 'is', null)
-      .order('published_at', { ascending: false })
-      .limit(10),
+      .order('published_at', { ascending: false, nullsFirst: false })
+      .limit(8),
     supabase
       .from('posts')
       .select(`
@@ -38,10 +46,9 @@ export default async function BroadsheetHomePage() {
         )
       `)
       .eq('status', 'published')
-      .not('published_at', 'is', null)
-      .order('published_at', { ascending: false })
+      .order('published_at', { ascending: false, nullsFirst: false })
       .limit(40),
-    supabase
+    adminSupabase
       .from('publications')
       .select('settings')
       .eq('id', 'a0000000-0000-0000-0000-000000000001')
@@ -50,9 +57,38 @@ export default async function BroadsheetHomePage() {
 
   const tickerPosts = tickerRes.data || [];
   const allPosts = (postsRes.data || []) as StoryCardPost[];
-  const manualHighlightIds: string[] = Array.isArray(pubRes.data?.settings?.highlight_post_ids)
-    ? pubRes.data.settings.highlight_post_ids
+  const manualHighlightIds: string[] = Array.isArray(pubRes.data?.settings?.highlight_post_ids) 
+    ? pubRes.data.settings.highlight_post_ids 
     : [];
+
+  // Fetch highlighted posts explicitly to guarantee they are found, even if they are old or missing dates
+  let highlightPostsData: any[] = [];
+  if (manualHighlightIds.length > 0) {
+    const { data, error } = await supabase
+      .from('posts')
+      .select(`
+        id, title, slug, lead_paragraph, read_time_minutes, 
+        volume_no, issue_no, published_at, cover_image_url, views_count,
+        users_extended ( persons ( full_name ) ),
+        categories:categories!posts_category_id_fkey (name, slug),
+        post_categories (
+          is_primary,
+          categories (id, name, slug)
+        )
+      `)
+      .in('id', manualHighlightIds)
+      .eq('status', 'published');
+    
+    if (error) console.error("Error fetching highlight posts:", error);
+    if (data) {
+      highlightPostsData = data;
+    }
+  }
+
+  // Preserve exact manual sort order from the admin panel
+  const manualHighlights = manualHighlightIds
+    .map(id => highlightPostsData.find(p => p.id === id))
+    .filter(Boolean) as StoryCardPost[];
 
   if (allPosts.length === 0) {
     return (
@@ -84,23 +120,14 @@ export default async function BroadsheetHomePage() {
     return { name: 'সাধারণ (General)', slug: 'general' };
   };
 
-  // 3. Hero Two-Slot: Pull from Admin "★ নির্বাচিত" (Highlights) first, fallback to latest
-  const manualHighlights = manualHighlightIds
-    .map(id => allPosts.find(p => p.id === id))
-    .filter(Boolean) as StoryCardPost[];
 
-  const dominantHero = manualHighlights[0] || allPosts[0];
-  const dominantCat = getPrimaryCategory(dominantHero);
+  // 3. Hero Two-Slot: Always use the latest published stories for the Hero
+  const dominantHero = allPosts[0];
+  const companionHero = allPosts[1];
 
-  const companionHero = manualHighlights[1] || allPosts.find(p => {
-    if (p.id === dominantHero.id) return false;
-    const cat = getPrimaryCategory(p);
-    return (cat.slug || cat.name) !== (dominantCat.slug || dominantCat.name);
-  }) || allPosts.find(p => p.id !== dominantHero.id) || null;
-
-  // 4. Featured Content Grid (Next 3 stories excluding the hero stories)
-  const heroIds = new Set([dominantHero.id, companionHero?.id].filter(Boolean));
-  const featuredPosts = allPosts.filter(p => !heroIds.has(p.id)).slice(0, 3);
+  // 4. Featured Content Grid (Next 4 stories excluding the hero stories)
+  const heroIds = new Set([dominantHero?.id, companionHero?.id].filter(Boolean));
+  const featuredPosts = allPosts.filter(p => !heroIds.has(p.id)).slice(0, 4);
 
   // 5. "সর্বাধিক পঠিত" (Popular by read time)
   const popularPosts = [...allPosts].sort((a, b) => {
@@ -139,8 +166,9 @@ export default async function BroadsheetHomePage() {
     .filter(p => p.id !== collectionLead.id)
     .slice(0, 3);
 
-  // 8. Highlights Grid: Fill remaining slots for the bottom section
-  const highlightPosts = [...manualHighlights, ...allPosts.filter(p => !manualHighlightIds.includes(p.id))].slice(0, 3);
+  // 8. Highlights Grid: STRICTLY manual selections from the Editorial Board. No auto fallback!
+  // These will appear in the Vertical Ticker on the left side.
+  const highlightPosts = [...manualHighlights];
 
   return (
     <div className="min-h-screen bg-ledger-paper text-ledger-ink flex flex-col">
@@ -166,17 +194,27 @@ export default async function BroadsheetHomePage() {
         {/* Centered Main Editorial Container */}
         <div className="max-w-[1400px] w-full mx-auto px-4 md:px-8 pt-12 space-y-16">
           
-          {/* 5. Featured Content Grid (3 Columns) */}
+          {/* 5. Featured Content & Highlights Split Section */}
           {featuredPosts.length > 0 && (
-            <section>
-              <SectionHeader
-                badge="FEATURED DISPATCHES"
-                title="প্রধান অনুসন্ধান ও সমকালীন বিশ্লেষণ"
-                subtitle="বিজ্ঞান, প্রযুক্তি ও সমকালীন বৈশ্বিক চিন্তার তথ্যনিষ্ঠ বয়ান"
-                href="#the-feed"
-                actionText="সম্পূর্ণ আর্কাইভ দেখুন →"
-              />
-              <StoryGrid posts={featuredPosts} columns={3} variant="standard" />
+            <section className="grid grid-cols-1 lg:grid-cols-3 gap-8 items-stretch">
+              {/* Left Column: Vertical Ticker for Highlights */}
+              <div className="lg:col-span-1 h-full">
+                <VerticalTicker posts={highlightPosts} />
+              </div>
+              
+              {/* Right Column: 2x2 Grid for Featured Dispatches */}
+              <div className="lg:col-span-2 flex flex-col h-full">
+                <SectionHeader
+                  badge="FEATURED DISPATCHES"
+                  title="প্রধান অনুসন্ধান ও সমকালীন বিশ্লেষণ"
+                  subtitle="বিজ্ঞান, প্রযুক্তি ও সমকালীন বৈশ্বিক চিন্তার তথ্যনিষ্ঠ বয়ান"
+                  href="#the-feed"
+                  actionText="সম্পূর্ণ আর্কাইভ দেখুন →"
+                />
+                <div className="flex-1">
+                  <StoryGrid posts={featuredPosts} columns={2} variant="standard" />
+                </div>
+              </div>
             </section>
           )}
 
@@ -221,16 +259,6 @@ export default async function BroadsheetHomePage() {
 
           {/* 9. Inline Newsletter Content Module (Mid-Page Real Excerpt + Subscription) */}
           <InlineNewsletterModule />
-
-          {/* 10. "নির্বাচিত সারসংক্ষেপ" (Highlights Grid with manual editor pin support) */}
-          <section>
-            <SectionHeader
-              badge="HIGHLIGHTS"
-              title="নির্বাচিত সারসংক্ষেপ"
-              subtitle="আমাদের সম্পাদকীয় বোর্ডের নির্বাচিত সেরা সমকালীন অনুসন্ধান ও বিশেষ বিশ্লেষণ"
-            />
-            <StoryGrid posts={highlightPosts} columns={3} variant="standard" />
-          </section>
 
           {/* 11. "The Feed" — Full Archive Catalog Browser with Dynamic Topics & Horizontal Next/Prev Controls */}
           <TheArchiveFeed

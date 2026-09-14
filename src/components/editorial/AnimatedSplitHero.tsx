@@ -22,7 +22,7 @@ function CardContent({ post, isDominant }: { post: HeroPost; isDominant: boolean
   const isAiImage = post.cover_image_url?.includes('pollinations.ai');
 
   return (
-    <div className="relative h-full w-full overflow-hidden bg-[#0F0D0B] flex flex-col justify-end p-8 md:p-10 border-2 border-ledger-ink group">
+    <div className="relative h-full w-full overflow-hidden bg-[#0F0D0B] flex flex-col justify-end p-8 md:p-10 group">
       
       {/* Background Image with CSS Ken Burns - no JS animation */}
       {post.cover_image_url && (
@@ -121,18 +121,17 @@ export function AnimatedSplitHero({ leftPost, rightPost }: AnimatedSplitHeroProp
       >
         {/* LEFT CARD — Pure CSS flex-grow transition (no JS layout thrashing) */}
         <div
-          className="relative cursor-pointer h-1/2 md:h-full"
+          className="relative cursor-pointer h-1/2 md:h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl hover:shadow-3xl"
           style={{
-            flexGrow: activeState === 0 ? 1.6 : 0.8,
+            flexGrow: activeState === 0 ? 3 : 1,
             flexShrink: 1,
             flexBasis: 0,
-            transition: 'flex-grow 700ms cubic-bezier(0.22, 1, 0.36, 1)',
           }}
           onMouseEnter={() => { setIsHovered(true); setActiveState(0); }}
         >
           <Link
             href={`/record/${leftPost.slug}`}
-            className="block h-full w-full shadow-[6px_6px_0_0_rgba(0,0,0,0.9)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.9)] hover:translate-x-[4px] hover:translate-y-[4px] transition-[transform,box-shadow] duration-200"
+            className="block h-full w-full"
           >
             <CardContent post={leftPost} isDominant={activeState === 0} />
           </Link>
@@ -140,18 +139,17 @@ export function AnimatedSplitHero({ leftPost, rightPost }: AnimatedSplitHeroProp
 
         {/* RIGHT CARD */}
         <div
-          className="relative cursor-pointer h-1/2 md:h-full"
+          className="relative cursor-pointer h-1/2 md:h-full transition-all duration-700 ease-[cubic-bezier(0.22,1,0.36,1)] shadow-2xl hover:shadow-3xl"
           style={{
-            flexGrow: activeState === 1 ? 1.6 : 0.8,
+            flexGrow: activeState === 1 ? 3 : 1,
             flexShrink: 1,
             flexBasis: 0,
-            transition: 'flex-grow 700ms cubic-bezier(0.22, 1, 0.36, 1)',
           }}
           onMouseEnter={() => { setIsHovered(true); setActiveState(1); }}
         >
           <Link
             href={`/record/${rightPost.slug}`}
-            className="block h-full w-full shadow-[6px_6px_0_0_rgba(0,0,0,0.9)] hover:shadow-[2px_2px_0_0_rgba(0,0,0,0.9)] hover:translate-x-[4px] hover:translate-y-[4px] transition-[transform,box-shadow] duration-200"
+            className="block h-full w-full"
           >
             <CardContent post={rightPost} isDominant={activeState === 1} />
           </Link>
