@@ -105,7 +105,26 @@ export default async function RootLayout({ children }: { children: React.ReactNo
                 বিভাগসমূহ
               </h3>
               <ul className="space-y-2 text-xs text-white/80">
-                {(footerCategories || []).map((cat) => (
+                {/* Always show the top 5 most important categories explicitly */}
+                <li>
+                  <Link href="/category/bangladesh" className="hover:text-ledger-amber-warm transition-colors font-bold text-white">বাংলাদেশ (জাতীয়)</Link>
+                </li>
+                <li>
+                  <Link href="/category/world" className="hover:text-ledger-amber-warm transition-colors">আন্তর্জাতিক</Link>
+                </li>
+                <li>
+                  <Link href="/category/politics" className="hover:text-ledger-amber-warm transition-colors">রাজনীতি</Link>
+                </li>
+                <li>
+                  <Link href="/category/business" className="hover:text-ledger-amber-warm transition-colors">ব্যবসা-বাণিজ্য</Link>
+                </li>
+                <li>
+                  <Link href="/category/technology" className="hover:text-ledger-amber-warm transition-colors">প্রযুক্তি</Link>
+                </li>
+                {(footerCategories || [])
+                  .filter(cat => !['bangladesh', 'national', 'world', 'politics', 'business', 'technology'].includes(cat.slug))
+                  .slice(0, 4) // Keep the total list to 9
+                  .map((cat) => (
                   <li key={cat.id}>
                     <Link
                       href={`/category/${cat.slug}`}
